@@ -8,14 +8,11 @@
 import SwiftUI
 
 struct DetailPokeInfoView: View {
-
-    var viewModel: DetailPokeViewModel?
-    
-    init(viewModel: DetailPokeViewModel) {
-        self.viewModel = viewModel
-    }
+    @ObservedObject var viewModel: MainLibraryViewModel
+    var animation: Namespace.ID
     
     @State private var isAnimating = false
+    @State private var start = false
     @State private var scale: CGFloat = 1.0
     @State private var animationAmount: CGFloat = 1
     @State private var animationCount = 0
@@ -26,6 +23,12 @@ struct DetailPokeInfoView: View {
             self.pokemonInfoView()
         }
         .background(.white)
+        .opacity(start ? 1.0 : 0.0)
+        .onAppear {
+            withAnimation(.easeInOut(duration: 0.5)) {
+                start.toggle()
+            }
+        }
     }
     
     
@@ -41,12 +44,15 @@ struct DetailPokeInfoView: View {
                             self.animationAmount = 0
                             animateCircle()
                         }
+                
                     
-                    AsyncImage(url: URL(string:viewModel?.poke?.image ?? "")) { image in
+                    
+                    AsyncImage(url: URL(string: viewModel.selectedPokemon.image)) { image in
                         image
                             .resizable()
                             .scaledToFit()
                             .frame(width: geometry.size.width * 0.5 ,height: geometry.size.width * 0.5)
+                            .matchedGeometryEffect(id: viewModel.selectedPokemon.image, in: animation)
                     } placeholder: {
                         ProgressView()
                     }
@@ -67,19 +73,21 @@ struct DetailPokeInfoView: View {
             }
             
             
+            
+            
             VStack(spacing: 10) {
                 VStack {
                     Spacer()
                         .frame(height: 10)
                     
-                    Text("\(viewModel?.poke?.name ?? "")")
+                    Text("\(viewModel.selectedPokemon.name)")
                         .font(.system(size: 17, weight: .bold))
                     
                     HStack(spacing: 5) {
                         
-                        ForEach((viewModel?.poke?.krType.indices)!, id: \.self) { index in
-                            let type = viewModel?.poke?.krType[index]
-                            Text(type?.name ?? "")
+                        ForEach((viewModel.selectedPokemon.krType.indices), id: \.self) { index in
+                            let type = viewModel.selectedPokemon.krType[index]
+                            Text(type.name)
                                 .foregroundStyle(.white)
                                 .frame(width: 120, height: 25, alignment: .center)
                                 .background(
@@ -90,13 +98,13 @@ struct DetailPokeInfoView: View {
                     }
                     
                     HStack {
-                        Text("\(viewModel?.poke?.formattedWeight ?? "") KG")
+                        Text("\(viewModel.selectedPokemon.formattedWeight) KG")
                             .frame(width: 100, height: 25, alignment: .center)
                             .font(.system(.subheadline, design: .default, weight: .bold))
                         
                         Spacer()
                         
-                        Text("\(viewModel?.poke?.formattedHeight ?? "") M")
+                        Text("\(viewModel.selectedPokemon.formattedHeight) M")
                             .frame(width: 100, height: 25, alignment: .center)
                             .font(.system(.subheadline, design: .default, weight: .bold))
                     }
@@ -132,25 +140,36 @@ struct DetailPokeInfoView: View {
                 .shadow(color: .gray, radius: 20, x: 0, y: 0)
                 .padding(EdgeInsets(top: 300, leading: 0, bottom: 0, trailing: 0))
                 
-                self.infoVieW()
+                self.infoView()
                 
                 self.statView()
                 Spacer()
             }
             
+            
+            
+            
             VStack {
                 Spacer()
                     .frame(height: 50)
                 HStack{
-                    Text("# \(viewModel?.poke?.id ?? 0)")
+                    Text("# \(viewModel.selectedPokemon.id)")
                         .font(.system(size: 18, weight: .bold))
                         .foregroundStyle(.gray)
                         .padding(.leading)
                     
                     Spacer()
                     Button{
-                        withAnimation {
-                            
+                        
+                        withAnimation(Animation.easeIn(duration: 0.5)) {
+                            viewModel.isDetail.toggle()
+                            start.toggle()
+                        }
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            withAnimation(.spring()) {
+                                viewModel.isDetail.toggle()
+                            }
                         }
                     } label: {
                         Image(systemName: "xmark.circle.fill")
@@ -159,7 +178,6 @@ struct DetailPokeInfoView: View {
                     }
                     .padding()
                     .foregroundColor(.white)
-                    .background(Color.red)
                     .clipShape(Circle())
                     .padding(.trailing) // 오른쪽 여백 추가
                 }
@@ -177,8 +195,8 @@ struct DetailPokeInfoView: View {
         
     }
     
-    func infoVieW() -> some View  {
-        Text(viewModel?.poke?.pokemonInfoText ?? "")
+    func infoView() -> some View  {
+        Text(viewModel.selectedPokemon.pokemonInfoText)
             .font(.system(size: 15, weight: .medium))
         
             .padding()
@@ -189,7 +207,8 @@ struct DetailPokeInfoView: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(Color.gray, lineWidth: 1)
-                ))
+                )
+            )
             .shadow(color: .gray, radius: 20, x: 0, y: 0)
     }
     
@@ -201,12 +220,12 @@ struct DetailPokeInfoView: View {
                 .font(.system(size: 15, weight: .bold))
                 .padding(.top, 10)
             
-            if let stats = viewModel?.poke?.state {
-                ForEach(stats) { stat in
-                    HorizontalBarChart(data: [Double(stat.base_stat)], color: statBarColor(state: stat.stat.name), title: stat.stat.krName)
-                        .foregroundStyle(.clear)
-                        .frame(width: 300)
-                }
+            //            if let stats = viewModel.selectedPokemon.state {
+            ForEach(viewModel.selectedPokemon.state) { stat in
+                HorizontalBarChart(data: [Double(stat.base_stat)], color: statBarColor(state: stat.stat.name), title: stat.stat.krName)
+                    .foregroundStyle(.clear)
+                    .frame(width: 300)
+                //                }
             }
         }
         .frame(width: 300, alignment: .center)
@@ -237,19 +256,19 @@ struct DetailPokeInfoView: View {
     }
     
     func typeBackground(index: Int) -> Color {
-        if let type = viewModel?.poke?.type[index] {
-            return ThemeColor.typeColor(type: type)
-        } else {
-            return ThemeColor.typeColor(type: PokemonType.normal)
-        }
+        //        if let type = viewModel?.poke?.type[index] {
+        return ThemeColor.typeColor(type: viewModel.selectedPokemon.type[index])
+        //        } else {
+        //            return ThemeColor.typeColor(type: PokemonType.normal)
+        //        }
     }
     
     func backgroundView() -> RadialGradient {
-        if  viewModel?.secondTypeColor != nil {
-            RadialGradient(colors: [viewModel?.secondTypeColor ?? .white, viewModel?.firstTypeColor?.opacity(0.8) ?? .white], center: .bottom, startRadius: 60, endRadius: 300)
-        } else {
-            RadialGradient(colors: [ viewModel?.firstTypeColor?.opacity(0.7) ?? .white], center: .bottom, startRadius: 60, endRadius: 300)
-        }
+        //        if  viewModel?.secondTypeColor != nil {
+        RadialGradient(colors: [viewModel.secondTypeColor ?? .white , viewModel.firstTypeColor?.opacity(0.8) ?? .white], center: .bottom, startRadius: 60, endRadius: 300)
+        //        } else {
+        //            RadialGradient(colors: [ viewModel?.firstTypeColor?.opacity(0.7) ?? .white], center: .bottom, startRadius: 60, endRadius: 300)
+        //        }
     }
     
     
@@ -278,22 +297,23 @@ struct DetailPokeInfoView: View {
     }
 }
 
-#Preview {
-    DetailPokeInfoView(viewModel:
-                        DetailPokeViewModel(poke:
-                                                Pokemon(id: 1, order: 1,
-                                                        name: "이상해씨", color: "green",
-                                                        height: 7, weight: 0.4,
-                                                        krType: [TypeName(language: LanguageSet(name: "ko", url: ""), name: "풀"), TypeName(language: LanguageSet(name: "ko", url: ""), name: "독")],
-                                                        enType: [TypeName(language: LanguageSet(name: "en", url: ""), name: "grass"),TypeName(language: LanguageSet(name: "en", url: ""), name: "Poison")],
-                                                        smallImage: "", largeImage: "",
-                                                        pokemonInfoText: "ㄴㅅ갸",
-                                                        state: [Stats(base_stat: 45, effort: 0, stat: Stat(name: "hp", url: ""))
-                                                                ,Stats(base_stat: 49, effort: 0, stat: Stat(name: "attack", url: ""))
-                                                                ,Stats(base_stat: 49, effort: 0, stat: Stat(name: "defense", url: ""))
-                                                                ,Stats(base_stat: 45, effort: 0, stat: Stat(name: "speed", url: ""))]
-                                                       )
-                                           )
-    )
-}
-
+//#Preview {
+//    DetailPokeInfoView(viewModel:
+//                        DetailPokeViewModel(poke:
+//                                                Pokemon(id: 1, order: 1,
+//                                                        name: "이상해씨", color: "green",
+//                                                        height: 7, weight: 0.4,
+//                                                        krType: [TypeName(language: LanguageSet(name: "ko", url: ""), name: "풀"), TypeName(language: LanguageSet(name: "ko", url: ""), name: "독")],
+//                                                        enType: [TypeName(language: LanguageSet(name: "en", url: ""), name: "grass"),TypeName(language: LanguageSet(name: "en", url: ""), name: "Poison")],
+//                                                        smallImage: "", largeImage: "",
+//                                                        pokemonInfoText: "ㄴㅅ갸"
+//                                                        ,
+//                                                        state: [Stats(base_stat: 45, effort: 0, stat: Stat(name: "hp", url: ""))
+//                                                                ,Stats(base_stat: 49, effort: 0, stat: Stat(name: "attack", url: ""))
+//                                                                ,Stats(base_stat: 49, effort: 0, stat: Stat(name: "defense", url: ""))
+//                                                                ,Stats(base_stat: 45, effort: 0, stat: Stat(name: "speed", url: ""))]
+//                                                       )
+//                                           )
+//    )
+//}
+//

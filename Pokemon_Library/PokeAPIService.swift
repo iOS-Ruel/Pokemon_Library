@@ -9,22 +9,28 @@ import Foundation
 import Alamofire
 
 struct ApiConstants {
-    static let getAllPokemon = "https://pokeapi.co/api/v2/pokemon?limit=20"
+    static let getAllPokemon = "https://pokeapi.co/api/v2/pokemon?offset="
     static let getDetailPokemon = "https://pokeapi.co/api/v2/pokemon/"
 }
 
 class PokeAPIService {
     var pokemons: [Pokemon] = []
 
-    func getPokemonList() async throws -> [PokeList] {
-        guard let url = URL(string: ApiConstants.getAllPokemon) else {
+    func getPokemonList(isFirst: Bool, nextUrl: String, pokemonCnt: Int = 0) async throws -> PokeLists {
+//        print("url check:", isFirst, nextUrl)
+        let url = "https://pokeapi.co/api/v2/pokemon?offset=\(pokemonCnt)&limit=20"
+        print("url check:",url)
+//        isFirst ? ApiConstants.getAllPokemon : nextUrl
+//        print("url", url)
+        
+        guard let url = URL(string: url) else {
              throw URLError(.badURL)
          }
          
          let (data, _) = try await URLSession.shared.data(from: url)
          let pokeLists = try JSONDecoder().decode(PokeLists.self, from: data)
-         
-         return pokeLists.results
+        
+         return pokeLists
     }
     
     func getPokemonDetail(url: String) async throws -> PokemonInfo {
@@ -38,11 +44,12 @@ class PokeAPIService {
         return pokemonInfo
     }
 
-    func getPokemonSpecies(allCount: Int) async throws -> [PokeSpecies] {
+    func getPokemonSpecies(starCnt: Int,allCount: Int) async throws -> [PokeSpecies] {
+        print("getPokemonSpecies", starCnt, allCount)
         var speciesArray: [PokeSpecies] = []
         let dispatchGroup = DispatchGroup()
         
-        for i in 1...allCount {
+        for i in starCnt...allCount {
             dispatchGroup.enter()
             let url = URL(string: "https://pokeapi.co/api/v2/pokemon-species/\(i)")!
             

@@ -11,7 +11,9 @@ import Foundation
 //https://pokeapi.co/api/v2/pokemon
 
 struct PokeLists: Codable {
-    let results: [PokeList]
+    var next: String?
+    var previous: String?
+    var results: [PokeList]
 }
 
 struct PokeList: Codable {
@@ -139,7 +141,11 @@ struct LanguageSet: Codable, Hashable {
     let url: String
 }
 
-struct Pokemon: Codable {
+struct Pokemon: Codable, Equatable {
+    static func == (lhs: Pokemon, rhs: Pokemon) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
     let id: Int
     let order: Int
     let name: String

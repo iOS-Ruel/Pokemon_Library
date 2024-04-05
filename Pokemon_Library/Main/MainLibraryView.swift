@@ -8,32 +8,45 @@
 import SwiftUI
 
 struct MainLibraryView: View {
-    
     @ObservedObject private var viewModel = MainLibraryViewModel()
+    @Namespace var animation
     
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
     
-    
-    
     var body: some View {
-        NavigationView {
-            ScrollView {
-                LazyVGrid(columns: columns, content: {
-                    ForEach(viewModel.pokemonSpecies, id: \.id) { poke in
-                        NavigationLink(destination: DetailPokeInfoView(viewModel: DetailPokeViewModel(poke: poke))) {
-                            MainLibraryListRow(poke: poke)
+        ZStack {
+            NavigationView {
+                ScrollView {
+                    LazyVGrid(columns: columns){
+                        ForEach(viewModel.pokemonSpecies, id: \.id) { poke in
+                            MainLibraryListRow(poke: poke,viewModel: viewModel, animation: animation)
+                                .onAppear {
+//                                    print(viewModel.pokemonSpecies.count)
+                                    if viewModel.pokemonSpecies.count > 1 && !viewModel.pokemonSpecies.isEmpty && poke == viewModel.pokemonSpecies.last {
+                                        print("마지막 셀입니다.")
+                                        Task {
+                                            viewModel.isFirst = false
+                                            viewModel.pokemonCnt += 20
+                                            await viewModel.getPokemon()
+                                        }
+                                    }
+                                }
                         }
-                        
                     }
-                })
-                
+                }
+                .navigationTitle("포켓몬 도감")
             }
-            .navigationTitle("포켓몬 도감") // 네비게이션 타이틀 추가
-            .onAppear {
-                Task {
-                    if viewModel.pokemonSpecies.isEmpty {
-                        await viewModel.getPokemon()
-                    }
+            
+            if viewModel.isDetail {
+                DetailPokeInfoView(viewModel: viewModel,
+                                   animation: animation)
+            }
+        }
+        .onAppear {
+            Task {
+                if viewModel.pokemonSpecies.isEmpty {
+                    viewModel.isFirst = true
+                    await viewModel.getPokemon()
                 }
             }
         }
