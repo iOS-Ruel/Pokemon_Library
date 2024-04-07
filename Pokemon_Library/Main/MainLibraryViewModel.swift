@@ -36,11 +36,18 @@ class MainLibraryViewModel: ObservableObject {
     
     
     @Published var isLoading : Bool = false
+    @Published var showProgress : Bool = false
+    
     func getPokemon() async {
+        DispatchQueue.main.async {
+            self.showProgress = true
+        }
+        
         if !isLoading {
+           
             Task {
                 do {
-                    pokeLists = try await apiService.getPokemonList(isFirst: isFirst, nextUrl: pokeLists?.next ?? ApiConstants.getAllPokemon, pokemonCnt: pokemonCnt)
+                    pokeLists = try await apiService.getPokemonList( nextUrl: pokeLists?.next ?? ApiConstants.getAllPokemon, pokemonCnt: pokemonCnt)
                     
                     
                     if let list = pokeLists?.results {
@@ -106,6 +113,7 @@ class MainLibraryViewModel: ObservableObject {
         }
         DispatchQueue.main.async {
             self.isLoading = false
+            self.showProgress = false
         }
     }
     

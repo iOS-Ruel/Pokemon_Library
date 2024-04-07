@@ -10,6 +10,7 @@ import SwiftUI
 struct MainLibraryView: View {
     @ObservedObject private var viewModel = MainLibraryViewModel()
     @Namespace var animation
+    @State private var showModal = false
     
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
     
@@ -19,12 +20,21 @@ struct MainLibraryView: View {
                 ScrollView {
                     LazyVGrid(columns: columns){
                         ForEach(viewModel.pokemonSpecies, id: \.id) { poke in
-                            MainLibraryListRow(poke: poke,viewModel: viewModel, animation: animation)
+                            MainLibraryListRow(poke: poke, viewModel: viewModel)
+                                .onTapGesture {
+                                    print(poke.name)
+                                    self.showModal = true
+                                    viewModel.selectedPokemon = poke
+                                }
+                                .fullScreenCover(isPresented: $showModal, content: {
+                                    DetailPokeInfoView(viewModel: DetailPokeViewModel(poke: viewModel.selectedPokemon))
+                                })
                                 .onAppear {
-//                                    print(viewModel.pokemonSpecies.count)
                                     if viewModel.pokemonSpecies.count > 1 && !viewModel.pokemonSpecies.isEmpty && poke == viewModel.pokemonSpecies.last {
                                         print("마지막 셀입니다.")
+                                        print(viewModel.isLoading)
                                         Task {
+                                            
                                             viewModel.isFirst = false
                                             viewModel.pokemonCnt += 20
                                             await viewModel.getPokemon()
@@ -32,15 +42,21 @@ struct MainLibraryView: View {
                                     }
                                 }
                         }
+                        
+                      
                     }
                 }
                 .navigationTitle("포켓몬 도감")
             }
-            
-            if viewModel.isDetail {
-                DetailPokeInfoView(viewModel: viewModel,
-                                   animation: animation)
+            if viewModel.showProgress {
+
+                ProgressView("loading ... ")
+                    .onAppear{
+                        print("loading")
+                    }
+                
             }
+
         }
         .onAppear {
             Task {

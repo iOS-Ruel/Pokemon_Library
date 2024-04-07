@@ -16,12 +16,8 @@ struct ApiConstants {
 class PokeAPIService {
     var pokemons: [Pokemon] = []
 
-    func getPokemonList(isFirst: Bool, nextUrl: String, pokemonCnt: Int = 0) async throws -> PokeLists {
-//        print("url check:", isFirst, nextUrl)
+    func getPokemonList(nextUrl: String, pokemonCnt: Int = 0) async throws -> PokeLists {
         let url = "https://pokeapi.co/api/v2/pokemon?offset=\(pokemonCnt)&limit=20"
-        print("url check:",url)
-//        isFirst ? ApiConstants.getAllPokemon : nextUrl
-//        print("url", url)
         
         guard let url = URL(string: url) else {
              throw URLError(.badURL)
@@ -45,7 +41,6 @@ class PokeAPIService {
     }
 
     func getPokemonSpecies(starCnt: Int,allCount: Int) async throws -> [PokeSpecies] {
-        print("getPokemonSpecies", starCnt, allCount)
         var speciesArray: [PokeSpecies] = []
         let dispatchGroup = DispatchGroup()
         
@@ -88,79 +83,6 @@ class PokeAPIService {
     }
     
     
-    
-//    func getPokemonList(completion: @escaping ([PokeList]) -> Void) {
-//        AF.request(ApiConstants.getAllPokemon, method: .get).responseDecodable(of: PokeLists.self) { response in
-//            switch response.result {
-//            case .success(let pokeLists):
-//                completion(pokeLists.results)
-//            case .failure(let error):
-//                print("getPokemonList", error.localizedDescription)
-//            }
-//        }
-//    }
-//    
-//    func getPokemonDetail(url: String, completion: @escaping (PokemonInfo) -> Void) {
-//        AF.request(url, method: .get).responseDecodable(of: PokemonInfo.self) { response in
-//            switch response.result {
-//            case .success(let pokemonInfo):
-//                completion(pokemonInfo)
-//            case .failure(let error):
-//                print("getPokemonDetail", error.localizedDescription)
-//            }
-//        }
-//    }
-//    
-//    func getPokemonSpecies(allCount: Int, completion: @escaping ([PokeSpecies]) -> Void) {
-//        var speciesArray: [PokeSpecies] = []
-//        
-//        let group = DispatchGroup()
-//        
-//        for i in 1...allCount {
-//            group.enter()
-//            AF.request("https://pokeapi.co/api/v2/pokemon-species/\(i)", method: .get).responseDecodable(of: PokeSpecies.self) { response in
-//                defer { group.leave() }
-//                
-//                switch response.result {
-//                case .success(let species):
-//                    speciesArray.append(species)
-//                case .failure(let error):
-//                    print("getPokemonSpecies:", error.localizedDescription)
-//                }
-//            }
-//        }
-//        
-//        group.notify(queue: .main) {
-//            completion(speciesArray)
-//        }
-//    }
-//    
-//    func getPokemonTypes(info: [PokemonInfo], completion: @escaping ([TypeNames]) -> Void) {
-//        var typeNamesArray: [TypeNames] = []
-//        
-//        let group = DispatchGroup()
-//        
-//        for pokemonInfo in info {
-//            for type in pokemonInfo.types {
-//                group.enter()
-//                AF.request(type.type.url, method: .get).responseDecodable(of: TypeNames.self) { response in
-//                    defer { group.leave() }
-//                    
-//                    switch response.result {
-//                    case .success(let typeNames):
-//                        typeNamesArray.append(typeNames)
-//                    case .failure(let error):
-//                        print("getPokemonTypes:", error.localizedDescription)
-//                    }
-//                }
-//            }
-//        }
-//        
-//        group.notify(queue: .main) {
-//            completion(typeNamesArray)
-//        }
-//    }
-
     
     func jsonPrint<T: Encodable>(data: T){
         do {

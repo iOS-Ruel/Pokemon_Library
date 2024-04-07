@@ -10,7 +10,7 @@ import SwiftUI
 struct MainLibraryListRow: View {
     var poke: Pokemon
     @ObservedObject var viewModel: MainLibraryViewModel
-    var animation: Namespace.ID
+//    var animation: Namespace.ID
     
     var body: some View {
         VStack(spacing: 5) {
@@ -24,13 +24,13 @@ struct MainLibraryListRow: View {
             .frame(width: 150, height: 150, alignment: .center)
             .background(ThemeColor.typeColor(type: poke.type.first ?? .normal).opacity(0.7)) // 배경에 색상 적용
             .clipShape(RoundedRectangle(cornerRadius: 10)) // 배경도 원형으로 클립
-            .onTapGesture {
-                print(viewModel.isDetail)
-                withAnimation(.spring()) {
-                    viewModel.selectedPokemon = poke
-                    viewModel.isDetail.toggle()
-                }
-            }
+//            .onTapGesture {
+//                
+//                withAnimation(.spring()) {
+//                    viewModel.selectedPokemon = poke
+//                    viewModel.isDetail.toggle()
+//                }
+//            }
             
             HStack {
                 Text("No.\(poke.id)")
@@ -73,18 +73,19 @@ struct MainLibraryListRow: View {
     }
 }
 
-//#Preview {
-//    MainLibraryListRow(poke:
-//                        Pokemon(id: 1, order: 1,
-//                                name: "이상해씨", color: "green",
-//                                height: 7, weight: 0.4,
-//                                krType: [TypeName(language: LanguageSet(name: "ko", url: ""), name: "풀"), TypeName(language: LanguageSet(name: "ko", url: ""), name: "독")],
-//                                enType: [TypeName(language: LanguageSet(name: "en", url: ""), name: "grass"),TypeName(language: LanguageSet(name: "en", url: ""), name: "Poison")],
-//                                smallImage: "", largeImage: "",
-//                                pokemonInfoText: "ㄴㅅ갸"
-//                                ,
-//                               state: []
-//                               )
-//    )
-//
-//}
+#Preview {
+    MainLibraryListRow(poke:
+                        Pokemon(id: 1, order: 1,
+                                name: "이상해씨", color: "green",
+                                height: 7, weight: 0.4,
+                                krType: [TypeName(language: LanguageSet(name: "ko", url: ""), name: "풀"), TypeName(language: LanguageSet(name: "ko", url: ""), name: "독")],
+                                enType: [TypeName(language: LanguageSet(name: "en", url: ""), name: "grass"),TypeName(language: LanguageSet(name: "en", url: ""), name: "Poison")],
+                                smallImage: "", largeImage: "",
+                                pokemonInfoText: "ㄴㅅ갸"
+                                ,
+                               state: []
+                               )
+                       ,viewModel: MainLibraryViewModel()
+    )
+
+}
