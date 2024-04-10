@@ -65,20 +65,73 @@
     1. CompletionHanlder를 이용하여 API 호출 후 데이터를 하나로 합치는 작업을 진행하였는데 비동기적으로 호출되기 때문에 원하는 데이터가 순서대로 정렬되지 않는 현상이 발생하여 async/await를 사용하여 순차 호출한 뒤 데이터를 가공
     <img width="1110" alt="ㄴㅊ" src="https://github.com/iOS-Ruel/Pokemon_Library/assets/67133244/5d6d2f3e-eb15-4c38-bf6c-a247b5eb7fcd">
 
-    2. swiftUI를 처음 프로젝트에 적용하다보니 body안에 모든 코드가 들어가다 보니 가독성에 대한 문제가 발생
-        - 각 view들을 메서드를 통해 return 시켜 분리
-            - 각각의 View단위로 분류하게 된다면 view를 return 하는 함수가 많아지게 되면서 가독성이 더 좋지 않은 것 같음 → 추가적인 고민 필요
-<table>
-<tr>
-        <th>개선 전</th>
-        <th>개선 후</th>
-</tr>
-<tr><td><pre><code>
-struct MainLibraryListRow: View {
+2. swiftUI를 처음 프로젝트에 적용하다보니 body안에 모든 코드가 들어가다 보니 가독성에 대한 문제가 발생
+    - 각 view들을 메서드를 통해 return 시켜 분리
+        - 각각의 View단위로 분류하게 된다면 view를 return 하는 함수가 많아지게 되면서 가독성이 더 좋지 않은 것 같음 → 추가적인 고민 필요
+    ### 개선 전
+    ```swift
+    struct MainLibraryListRow: View {
     var poke: Pokemon
     @ObservedObject var viewModel: MainLibraryViewModel
     var body: some View {
         VStack(spacing: 5) {
+                AsyncImage(url: URL(string: poke.image)) { image in
+                    image
+                        .resizable()
+                        .renderingMode(.original)
+                } placeholder: {
+                    ProgressView()
+                }
+                .frame(width: 150, height: 150, alignment: .center)
+                .background(ThemeColor.typeColor(type: poke.type.first ?? .normal).opacity(0.7)) // 배경에 색상 적용
+                .clipShape(RoundedRectangle(cornerRadius: 10)) // 배경도 원형으로 클립      
+                HStack {
+                    Text("No.\(poke.id)")
+                        .foregroundColor(.gray)
+                    Spacer()
+                }
+                .frame(width: 150,alignment: .center)
+                HStack {
+                    Text("\(poke.name)")
+                        .foregroundColor(.black)
+                    Spacer()
+                }
+                .frame(width: 150,alignment: .center)
+                HStack(spacing: 5) {
+                    ForEach(poke.krType.indices, id: \.self) { index in
+                        let type = poke.krType[index]
+                        Text(type.name)
+                            .foregroundStyle(.white)
+                            .frame(width: 75, height: 25, alignment: .center)
+                        
+                            .background(ThemeColor.typeColor(type: poke.type[index]))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                        
+                        if poke.krType.count == 1 {
+                            Spacer()
+                        }
+                    }
+                }
+            .frame(width: 150,alignment: .center)
+            }
+        }
+    }
+    ```
+
+    ### 개선 후
+    ```swift
+    struct MainLibraryListRow: View {
+        var poke: Pokemon
+        @ObservedObject var viewModel: MainLibraryViewModel
+        var body: some View {
+            VStack(spacing: 5) {
+                pokeImageView()
+                pokeIdView()
+                pokeNameView()
+                pokeTypeView()
+            }
+        }
+        func pokeImageView() -> some View {
             AsyncImage(url: URL(string: poke.image)) { image in
                 image
                     .resizable()
@@ -88,19 +141,26 @@ struct MainLibraryListRow: View {
             }
             .frame(width: 150, height: 150, alignment: .center)
             .background(ThemeColor.typeColor(type: poke.type.first ?? .normal).opacity(0.7)) // 배경에 색상 적용
-            .clipShape(RoundedRectangle(cornerRadius: 10)) // 배경도 원형으로 클립      
+            .clipShape(RoundedRectangle(cornerRadius: 10)) // 배경도 원형으로 클립
+        }
+        func pokeIdView() -> some View {
             HStack {
                 Text("No.\(poke.id)")
                     .foregroundColor(.gray)
+                
                 Spacer()
             }
             .frame(width: 150,alignment: .center)
+        }
+        func pokeNameView() -> some View {
             HStack {
                 Text("\(poke.name)")
                     .foregroundColor(.black)
                 Spacer()
             }
             .frame(width: 150,alignment: .center)
+        }
+        func pokeTypeView() -> some View {
             HStack(spacing: 5) {
                 ForEach(poke.krType.indices, id: \.self) { index in
                     let type = poke.krType[index]
@@ -115,77 +175,14 @@ struct MainLibraryListRow: View {
                         Spacer()
                     }
                 }
+                
             }
             .frame(width: 150,alignment: .center)
         }
     }
-}
-</td>
-<td>
-<pre><code>
-struct MainLibraryListRow: View {
-    var poke: Pokemon
-    @ObservedObject var viewModel: MainLibraryViewModel
-    var body: some View {
-        VStack(spacing: 5) {
-            pokeImageView()
-            pokeIdView()
-            pokeNameView()
-            pokeTypeView()
-        }
-    }
-    func pokeImageView() -> some View {
-        AsyncImage(url: URL(string: poke.image)) { image in
-            image
-                .resizable()
-                .renderingMode(.original)
-        } placeholder: {
-            ProgressView()
-        }
-        .frame(width: 150, height: 150, alignment: .center)
-        .background(ThemeColor.typeColor(type: poke.type.first ?? .normal).opacity(0.7)) // 배경에 색상 적용
-        .clipShape(RoundedRectangle(cornerRadius: 10)) // 배경도 원형으로 클립
-    }
-    func pokeIdView() -> some View {
-        HStack {
-            Text("No.\(poke.id)")
-                .foregroundColor(.gray)
-            
-            Spacer()
-        }
-        .frame(width: 150,alignment: .center)
-    }
-    func pokeNameView() -> some View {
-        HStack {
-            Text("\(poke.name)")
-                .foregroundColor(.black)
-            Spacer()
-        }
-        .frame(width: 150,alignment: .center)
-    }
-    func pokeTypeView() -> some View {
-        HStack(spacing: 5) {
-            ForEach(poke.krType.indices, id: \.self) { index in
-                let type = poke.krType[index]
-                Text(type.name)
-                    .foregroundStyle(.white)
-                    .frame(width: 75, height: 25, alignment: .center)
-                
-                    .background(ThemeColor.typeColor(type: poke.type[index]))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                
-                if poke.krType.count == 1 {
-                    Spacer()
-                }
-            }
-            
-        }
-        .frame(width: 150,alignment: .center)
-    }
-}
-</td>
-</tr>
-</table>
+    ```
+
+
 
 3. 페이징 처리에 대한 문제 
     - 메인 리스트 뷰에서 스크롤이 최하단에 도달했을때 데이터를 추가적으로 호출하여야 하는데 ZStack가 onAppear 때 첫 데이터를 호출 하는 코드를 넣었는데 상세화면에서 되돌아왔을때도 API를 호출하는 현상 발생
