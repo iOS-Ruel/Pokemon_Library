@@ -31,7 +31,6 @@ enum PokemonType: String {
 
 struct ThemeColor {
     static let primary = UIColor(hexString: "D21312")
-    
     static let normal = UIColor(hexString: "D8D9DA")
     static let fighting = UIColor(hexString: "F28705")
     static let flying = UIColor(hexString: "95C8FF")

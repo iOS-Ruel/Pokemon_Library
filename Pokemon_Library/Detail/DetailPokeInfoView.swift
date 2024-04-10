@@ -9,7 +9,6 @@ import SwiftUI
 
 struct DetailPokeInfoView: View {
     var viewModel: DetailPokeViewModel
-    //    var animation: Namespace.ID
     @Environment(\.presentationMode) var presentation
     
     @State private var isAnimating = false
@@ -26,7 +25,6 @@ struct DetailPokeInfoView: View {
         .background(.white)
         .opacity(start ? 1.0 : 0.0)
         .onAppear {
-            print(viewModel.poke?.name)
             withAnimation(.easeInOut(duration: 0.5)) {
                 start.toggle()
             }
@@ -38,32 +36,11 @@ struct DetailPokeInfoView: View {
         return ZStack {
             GeometryReader { geometry in
                 ZStack() {
-                    Circle()
-                        .stroke((backgroundView()), lineWidth: 3)
-                        .scaleEffect(animationAmount)
-                        .opacity(Double(2 - animationAmount))
-                        .onAppear {
-                            self.animationAmount = 0
-                            animateCircle()
-                        }
-                    
+                    pokeImageBGView()
                     
                     if let image = viewModel.poke?.image {
-                        AsyncImage(url: URL(string: image)) { image in
-                            image
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: geometry.size.width * 0.5 ,height: geometry.size.width * 0.5)
-                            //                                .matchedGeometryEffect(id: viewModel.poke?.image, in: animation)
-                        } placeholder: {
-                            ProgressView()
-                        }
-                        .padding()
-                        .scaleEffect(isAnimating ? 1.2 : 1.0)
-                        .rotationEffect(.degrees(isAnimating ? randomCount() : 0))
-                        .shadow(radius: 8)
+                        pokeImageView(geometry: geometry, imageUrl: image)
                     }
-                    
                 }
                 .onTapGesture {
                     self.animationCount = 0
@@ -76,128 +53,149 @@ struct DetailPokeInfoView: View {
                 )
             }
             
+            pokeWHInfoView()
             
-            
-            
-            VStack(spacing: 10) {
-                VStack {
-                    Spacer()
-                        .frame(height: 10)
-                    
-                    Text("\(viewModel.poke?.name ?? "")")
-                        .font(.system(size: 17, weight: .bold))
-                    
-                    HStack(spacing: 5) {
-                        
-                        ForEach(((viewModel.poke?.krType.indices)!), id: \.self) { index in
-                            let type = viewModel.poke?.krType[index]
-                            Text(type?.name ?? "")
-                                .foregroundStyle(.white)
-                                .frame(width: 120, height: 25, alignment: .center)
-                                .background(
-                                    typeBackground(index: index)
-                                )
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                        }
-                    }
-                    
-                    HStack {
-                        Text("\(viewModel.poke?.formattedWeight ?? "") KG")
-                            .frame(width: 100, height: 25, alignment: .center)
-                            .font(.system(.subheadline, design: .default, weight: .bold))
-                        
-                        Spacer()
-                        
-                        Text("\(viewModel.poke?.formattedHeight ?? "") M")
-                            .frame(width: 100, height: 25, alignment: .center)
-                            .font(.system(.subheadline, design: .default, weight: .bold))
-                    }
-                    .frame(width: 200,alignment: .center)
-                    
-                    HStack {
-                        Text("몸무게")
-                            .frame(width: 100, height: 25, alignment: .center)
-                            .font(.system(size: 15))
-                            .foregroundStyle(.gray)
-                        
-                        Text("키")
-                            .frame(width: 100, height: 25, alignment: .center)
-                            .font(.system(size: 15))
-                            .foregroundStyle(.gray)
-                        
-                    }
-                    .frame(width: 200, alignment: .center)
-                    
-                    
-                    Spacer()
-                        .frame(height: 10)
-                }
-                .frame(width: 300, alignment: .center)
-                .background( RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.white) // 배경색 적용
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.gray, lineWidth: 1)
-                    )
-                        .shadow(color: .gray, radius: 20, x: 0, y: 0)
-                )
-                .shadow(color: .gray, radius: 20, x: 0, y: 0)
-                .padding(EdgeInsets(top: 300, leading: 0, bottom: 0, trailing: 0))
-                
-                self.infoView()
-                
-                self.statView()
-                Spacer()
-            }
-            
-            
-            
-            
-            VStack {
-                Spacer()
-                    .frame(height: 50)
-                HStack{
-                    Text("# \(viewModel.poke?.id ?? 0)")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundStyle(.gray)
-                        .padding(.leading)
-                    
-                    Spacer()
-                    Button{
-                        
-                        withAnimation(Animation.easeIn(duration: 0.5)) {
-                            presentation.wrappedValue.dismiss()
-//                            start.toggle()
-                        }
-                        
-//                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-//                            withAnimation(.spring()) {
-//                                viewModel.isDetail.toggle()
-//                            }
-//                        }
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.title)
-                            .foregroundColor(.primary)
-                    }
-                    .padding()
-                    .foregroundColor(.white)
-                    .clipShape(Circle())
-                    .padding(.trailing) // 오른쪽 여백 추가
-                }
-                
-                
-                Spacer()
-                
-            }
-            .padding(.trailing, 16) // 버튼을 오른쪽 상단에 이동시키기 위한 추가 패딩
-            
+            topIdCloseView()
         }
         .edgesIgnoringSafeArea(.all)
-        
-        
-        
     }
+    
+    func topIdCloseView() -> some View {
+        VStack {
+            Spacer()
+                .frame(height: 50)
+            HStack{
+                Text("# \(viewModel.poke?.id ?? 0)")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundStyle(.gray)
+                    .padding(.leading)
+                
+                Spacer()
+                Button{
+                    
+                    withAnimation(Animation.easeIn(duration: 0.5)) {
+                        presentation.wrappedValue.dismiss()
+
+                    }
+                    
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title)
+                        .foregroundColor(.primary)
+                }
+                .padding()
+                .foregroundColor(.white)
+                .clipShape(Circle())
+                .padding(.trailing) // 오른쪽 여백 추가
+            }
+            
+            
+            Spacer()
+            
+        }
+        .padding(.trailing, 16) // 버튼을 오른쪽 상단에 이동시키기 위한 추가 패딩
+    }
+    
+    func pokeWHInfoView() -> some View {
+        VStack(spacing: 10) {
+            VStack {
+                Spacer()
+                    .frame(height: 10)
+                
+                Text("\(viewModel.poke?.name ?? "")")
+                    .font(.system(size: 17, weight: .bold))
+                
+                HStack(spacing: 5) {
+                    
+                    ForEach(((viewModel.poke?.krType.indices)!), id: \.self) { index in
+                        let type = viewModel.poke?.krType[index]
+                        Text(type?.name ?? "")
+                            .foregroundStyle(.white)
+                            .frame(width: 120, height: 25, alignment: .center)
+                            .background(
+                                typeBackground(index: index)
+                            )
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                }
+                
+                
+                HStack {
+                    Text("\(viewModel.poke?.formattedWeight ?? "") KG")
+                        .frame(width: 100, height: 25, alignment: .center)
+                        .font(.system(.subheadline, design: .default, weight: .bold))
+                    
+                    Spacer()
+                    
+                    Text("\(viewModel.poke?.formattedHeight ?? "") M")
+                        .frame(width: 100, height: 25, alignment: .center)
+                        .font(.system(.subheadline, design: .default, weight: .bold))
+                }
+                .frame(width: 200,alignment: .center)
+                
+                HStack {
+                    Text("몸무게")
+                        .frame(width: 100, height: 25, alignment: .center)
+                        .font(.system(size: 15))
+                        .foregroundStyle(.gray)
+                    
+                    Text("키")
+                        .frame(width: 100, height: 25, alignment: .center)
+                        .font(.system(size: 15))
+                        .foregroundStyle(.gray)
+                    
+                }
+                .frame(width: 200, alignment: .center)
+                
+                
+                Spacer()
+                    .frame(height: 10)
+            }
+            .frame(width: 300, alignment: .center)
+            .background( RoundedRectangle(cornerRadius: 16)
+                .fill(Color.white) // 배경색 적용
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.gray, lineWidth: 1)
+                )
+                    .shadow(color: .gray, radius: 20, x: 0, y: 0)
+            )
+            .shadow(color: .gray, radius: 20, x: 0, y: 0)
+            .padding(EdgeInsets(top: 300, leading: 0, bottom: 0, trailing: 0))
+            
+            self.infoView()
+            
+            self.statView()
+            Spacer()
+        }
+    }
+    
+    func pokeImageBGView() -> some View{
+        Circle()
+            .stroke((backgroundView()), lineWidth: 3)
+            .scaleEffect(animationAmount)
+            .opacity(Double(2 - animationAmount))
+            .onAppear {
+                self.animationAmount = 0
+                animateCircle()
+            }
+    }
+    
+    func pokeImageView(geometry: GeometryProxy,imageUrl: String) -> some View {
+        AsyncImage(url: URL(string: imageUrl)) { image in
+            image
+                .resizable()
+                .scaledToFit()
+                .frame(width: geometry.size.width * 0.5 ,height: geometry.size.width * 0.5)
+        } placeholder: {
+            ProgressView()
+        }
+        .padding()
+        .scaleEffect(isAnimating ? 1.2 : 1.0)
+        .rotationEffect(.degrees(isAnimating ? randomCount() : 0))
+        .shadow(radius: 8)
+    }
+    
     
     func infoView() -> some View  {
         
@@ -269,13 +267,8 @@ struct DetailPokeInfoView: View {
     }
     
     func backgroundView() -> RadialGradient {
-        //        if  viewModel?.secondTypeColor != nil {
         RadialGradient(colors: [viewModel.secondTypeColor ?? .white , viewModel.firstTypeColor?.opacity(0.8) ?? .white], center: .bottom, startRadius: 60, endRadius: 300)
-        //        } else {
-        //            RadialGradient(colors: [ viewModel?.firstTypeColor?.opacity(0.7) ?? .white], center: .bottom, startRadius: 60, endRadius: 300)
-        //        }
     }
-    
     
     func randomCount() -> Double {
         let countArr: [Double] = [10, -10]

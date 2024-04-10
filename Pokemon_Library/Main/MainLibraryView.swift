@@ -20,6 +20,8 @@ struct MainLibraryView: View {
                 ScrollView {
                     LazyVGrid(columns: columns){
                         ForEach(viewModel.pokemonSpecies, id: \.id) { poke in
+                            
+                            
                             MainLibraryListRow(poke: poke, viewModel: viewModel)
                                 .onTapGesture {
                                     print(poke.name)
@@ -31,10 +33,8 @@ struct MainLibraryView: View {
                                 })
                                 .onAppear {
                                     if viewModel.pokemonSpecies.count > 1 && !viewModel.pokemonSpecies.isEmpty && poke == viewModel.pokemonSpecies.last {
-                                        print("마지막 셀입니다.")
-                                        print(viewModel.isLoading)
+                                    
                                         Task {
-                                            
                                             viewModel.isFirst = false
                                             viewModel.pokemonCnt += 20
                                             await viewModel.getPokemon()
@@ -42,19 +42,16 @@ struct MainLibraryView: View {
                                     }
                                 }
                         }
-                        
-                      
                     }
                 }
                 .navigationTitle("포켓몬 도감")
             }
+            
             if viewModel.showProgress {
-
                 ProgressView("loading ... ")
                     .onAppear{
                         print("loading")
                     }
-                
             }
 
         }
