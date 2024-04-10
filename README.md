@@ -1,6 +1,8 @@
 # Pokemon Pokédex
 
 <b>Pokemon_Library</b>: SwiftUI와 https://pokeapi.co/의 API를 활용한 간단한 포켓몬 도감 앱
+<br>
+<b>노션으로 보기</b> : https://important-card-5e8.notion.site/30ae1aef49ab49ed91ea8823fad3a2ff?pvs=4
 
 
 <p align="center">  
