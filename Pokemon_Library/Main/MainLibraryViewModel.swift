@@ -38,45 +38,39 @@ class MainLibraryViewModel: ObservableObject {
     @Published var isLoading : Bool = false
     @Published var showProgress : Bool = false
     
-    func getPokemon() async {
+    func getPokemon() async throws {
         DispatchQueue.main.async {
             self.showProgress = true
         }
         
         if !isLoading {
-           
-            Task {
-                do {
-                    pokeLists = try await apiService.getPokemonList( nextUrl: pokeLists?.next ?? ApiConstants.getAllPokemon, pokemonCnt: pokemonCnt)
-                    
-                    
-                    if let list = pokeLists?.results {
-                        for i in list {
-                            do {
-                                let pokeInfo = try await apiService.getPokemonDetail(url: i.url)
-                                self.pokemonInfo.append(pokeInfo)
-                            } catch {
-                                print("Error fetching Pokemon detail:", error)
-                            }
-                        }
+            pokeLists = try await apiService.getPokemonList( nextUrl: pokeLists?.next ?? ApiConstants.getAllPokemon, pokemonCnt: pokemonCnt)
+            
+            if let list = pokeLists?.results {
+                for i in list {
+                    do {
+                        let pokeInfo = try await apiService.getPokemonDetail(url: i.url)
+                        self.pokemonInfo.append(pokeInfo)
+                    } catch {
+                        print("Error fetching Pokemon detail:", error)
                     }
-                    
-                    let pokespecies = try await apiService.getPokemonSpecies(starCnt: pokemonCnt + 1, allCount: self.pokemonInfo.count)
-                    self.pokemonColor.append(contentsOf: pokespecies.map { $0.color.name })
-                    self.pokemonName.append(contentsOf: pokespecies.flatMap { $0.names.filter { $0.language.name == "ko" }.map { $0.name } })
-                    self.pokemonInfoText.append(contentsOf:pokespecies.compactMap({ $0.flavor_text_entries.filter { $0.language.name == "ko" }.first }))
-                    
-                    let typeNames = try await apiService.getPokemonTypes(info: self.pokemonInfo)
-                    
-                    self.krTypeNameArr = typeNames.flatMap { $0.names.filter { $0.language.name == "ko" } }
-                    self.enTypeNameArr = typeNames.flatMap { $0.names.filter { $0.language.name == "en" } }
-                    
-                    testFunc()
-                } catch {
-                    print("Error:", error.localizedDescription)
                 }
             }
+            
+            let pokespecies = try await apiService.getPokemonSpecies(starCnt: pokemonCnt + 1, allCount: self.pokemonInfo.count)
+            self.pokemonColor.append(contentsOf: pokespecies.map { $0.color.name })
+            self.pokemonName.append(contentsOf: pokespecies.flatMap { $0.names.filter { $0.language.name == "ko" }.map { $0.name } })
+            self.pokemonInfoText.append(contentsOf:pokespecies.compactMap({ $0.flavor_text_entries.filter { $0.language.name == "ko" }.first }))
+            
+            let typeNames = try await apiService.getPokemonTypes(info: self.pokemonInfo)
+            
+            self.krTypeNameArr = typeNames.flatMap { $0.names.filter { $0.language.name == "ko" } }
+            self.enTypeNameArr = typeNames.flatMap { $0.names.filter { $0.language.name == "en" } }
+            
+            testFunc()
+            
         }
+        
     }
     
     
@@ -85,7 +79,6 @@ class MainLibraryViewModel: ObservableObject {
         DispatchQueue.main.async {
             self.isLoading = true
         }
-        
         
         for i in pokemonCnt..<self.pokemonInfo.count {
             count += self.pokemonInfo[i].types.count

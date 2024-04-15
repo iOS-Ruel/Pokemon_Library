@@ -33,12 +33,15 @@ struct MainLibraryView: View {
                                 })
                                 .onAppear {
                                     if viewModel.pokemonSpecies.count > 1 && !viewModel.pokemonSpecies.isEmpty && poke == viewModel.pokemonSpecies.last {
-                                    
+                                        
+                                        
+                                        viewModel.isFirst = false
+                                        viewModel.pokemonCnt += 20
                                         Task {
-                                            viewModel.isFirst = false
-                                            viewModel.pokemonCnt += 20
-                                            await viewModel.getPokemon()
+                                            try await viewModel.getPokemon()
                                         }
+                                        
+                                        
                                     }
                                 }
                         }
@@ -53,15 +56,16 @@ struct MainLibraryView: View {
                         print("loading")
                     }
             }
-
+            
         }
         .onAppear {
-            Task {
-                if viewModel.pokemonSpecies.isEmpty {
-                    viewModel.isFirst = true
-                    await viewModel.getPokemon()
+            if viewModel.pokemonSpecies.isEmpty {
+                viewModel.isFirst = true
+                Task {
+                    try await viewModel.getPokemon()
                 }
             }
+            
         }
     }
 }

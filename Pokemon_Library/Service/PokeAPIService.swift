@@ -78,7 +78,6 @@ class PokeAPIService {
                 dispatchGroup.leave()
             }
         }
-        
         return typeNamesArray
     }
     
@@ -93,8 +92,6 @@ class PokeAPIService {
         } catch {
             print("Error encoding data: \(error)")
         }
-    }
-    
-    
+    }    
     
 }
