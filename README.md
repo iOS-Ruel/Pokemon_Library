@@ -205,6 +205,6 @@
 
 - swiftUI를 처음 사용해 보았는데, 기존 UIKit에 비해 코드 작성이 쉬워지고 자유로워짐을 느꼈다.
 - **@State, @Binding, @Environment** 등 프로퍼티 래퍼를 사용하게 되었는데 정리를 하여 확실하게 기억해야겠다.
-    - https://github.com/iOS-Ruel/SwiftUI_DiarySample → 인강을 통해 사용해보며 프로퍼티 래퍼 정리
+    - https://github.com/iOS-Ruel/SwiftUI_DiarySample → 학습을 통해 사용해보며 프로퍼티 래퍼 정리
 - 화면전환 애니메이션에 있어 제약사항이 많은 것 같다(개인적으로 찾아보았을때…) 아직 swiftUI만 사용하기 보다 UIKit과 함께 사용해야 더 많은 기능을 구현할 수 있을 것 같다
 - 혼자 진행하다 보니 깃 브랜치 관리에 대해 소홀했다라고 생각이 들었음. 혼자 하더라도 기능별 브랜치를 만들어 관리하는 습관을 길러야할것 같음
