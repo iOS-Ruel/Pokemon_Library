@@ -58,6 +58,7 @@ class MainLibraryViewModel: ObservableObject {
             }
             
             let pokespecies = try await apiService.getPokemonSpecies(starCnt: pokemonCnt + 1, allCount: self.pokemonInfo.count)
+            
             self.pokemonColor.append(contentsOf: pokespecies.map { $0.color.name })
             self.pokemonName.append(contentsOf: pokespecies.flatMap { $0.names.filter { $0.language.name == "ko" }.map { $0.name } })
             self.pokemonInfoText.append(contentsOf:pokespecies.compactMap({ $0.flavor_text_entries.filter { $0.language.name == "ko" }.first }))
@@ -127,4 +128,59 @@ class MainLibraryViewModel: ObservableObject {
         return nil
         
     }
+    
+    var subsciptions = Set<AnyCancellable>()
+    
+    
+    var pokemonLists: PokeLists?
+    
+    @Published var pokemonArr: [Pokemon] = []
+    
+    func fetchListAndThenDetail(_ fetchCount: Int = 0) {
+
+        ApiService.fetchListAndThenDetail(fetchCount)
+                .flatMap { pokeList -> AnyPublisher<Pokemon, Error> in
+                    return ApiService.fetchSpecies(number: pokeList.id)
+                        .flatMap { species -> AnyPublisher<Pokemon, Error> in
+                            let id = pokeList.id
+                            let order = pokeList.order
+                            let color = species.color.name
+                            let name = species.names.filter { $0.language.name == "ko" }.first!.name
+                            let height = Double(pokeList.height / 10)
+                            let weight = Double(pokeList.height / 10)
+                            let image = pokeList.sprites.other.showdown.front_default
+                            let infoText = species.flavor_text_entries.filter { $0.language.name == "ko" }.first!.flavor_text
+                            let state = pokeList.stats.filter { $0.stat.name != "special-attack" && $0.stat.name !=  "special-defense" }
+                            
+                            return ApiService.fetchTypes(info: pokeList)
+                                .map { types -> Pokemon in
+                                    let krNameArr = types.flatMap({ $0.names.filter{$0.language.name == "ko"} })
+                                    let enNameArr =  types.flatMap({ $0.names.filter{$0.language.name == "en"} })
+                                    
+                                    let pokemon = Pokemon(id: id, order: order, name: name, color: color, height:  height, weight: weight, krType: krNameArr, enType: enNameArr, smallImage: image, largeImage: image, pokemonInfoText: infoText, state: state)
+                                    return pokemon
+                                }
+                                .eraseToAnyPublisher()
+                        }
+                        .eraseToAnyPublisher()
+                }
+                .collect()
+                .sink { completion in
+                    switch completion {
+                    case .finished:
+                        print("All requests finished")
+                        
+                    case .failure(let error):
+                        print("Error: \(error)")
+                    }
+                } receiveValue: { pokemons in
+                    // 모든 Pokemon을 받았으므로 정렬할 수 있음
+                    let sortedPokemons = pokemons.sorted { $0.order < $1.order }
+                    // 정렬된 Pokemons를 사용하거나 저장
+                    
+                    self.pokemonArr = sortedPokemons
+                }
+                .store(in: &subsciptions)
+    }
+    
 }

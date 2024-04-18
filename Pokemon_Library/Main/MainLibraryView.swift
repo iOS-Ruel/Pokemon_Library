@@ -19,7 +19,7 @@ struct MainLibraryView: View {
             NavigationView {
                 ScrollView {
                     LazyVGrid(columns: columns){
-                        ForEach(viewModel.pokemonSpecies, id: \.id) { poke in
+                        ForEach(viewModel.pokemonArr, id: \.id) { poke in
                             
                             
                             MainLibraryListRow(poke: poke, viewModel: viewModel)
@@ -43,6 +43,8 @@ struct MainLibraryView: View {
                                         
                                         
                                     }
+                                    
+                                    
                                 }
                         }
                     }
@@ -59,12 +61,15 @@ struct MainLibraryView: View {
             
         }
         .onAppear {
-            if viewModel.pokemonSpecies.isEmpty {
-                viewModel.isFirst = true
-                Task {
-                    try await viewModel.getPokemon()
-                }
-            }
+            viewModel.fetchListAndThenDetail(0)
+//            if viewModel.pokemonSpecies.isEmpty {
+//                viewModel.isFirst = true
+//                Task {
+//                    try await viewModel.getPokemon()
+//                }
+//                
+//                viewModel.fetchListAndThenDetail(0)
+//            }
             
         }
     }
