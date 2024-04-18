@@ -12,6 +12,9 @@ struct MainLibraryView: View {
     @Namespace var animation
     @State private var showModal = false
     
+    
+    @State private var count = 0
+    
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
     
     var body: some View {
@@ -32,15 +35,12 @@ struct MainLibraryView: View {
                                     DetailPokeInfoView(viewModel: DetailPokeViewModel(poke: viewModel.selectedPokemon))
                                 })
                                 .onAppear {
-                                    if viewModel.pokemonSpecies.count > 1 && !viewModel.pokemonSpecies.isEmpty && poke == viewModel.pokemonSpecies.last {
-                                        
-                                        
-                                        viewModel.isFirst = false
-                                        viewModel.pokemonCnt += 20
-                                        Task {
-                                            try await viewModel.getPokemon()
-                                        }
-                                        
+                                    
+                                    
+                                    if viewModel.pokemonArr.count > 1 && !viewModel.pokemonArr.isEmpty && poke == viewModel.pokemonArr.last {
+                                        self.count += 20
+                                        viewModel.fetchListAndThenDetail(self.count)
+   
                                         
                                     }
                                     
@@ -61,16 +61,10 @@ struct MainLibraryView: View {
             
         }
         .onAppear {
-            viewModel.fetchListAndThenDetail(0)
-//            if viewModel.pokemonSpecies.isEmpty {
-//                viewModel.isFirst = true
-//                Task {
-//                    try await viewModel.getPokemon()
-//                }
-//                
-//                viewModel.fetchListAndThenDetail(0)
-//            }
-            
+            if viewModel.pokemonArr.isEmpty {
+                viewModel.fetchListAndThenDetail()
+            }
+
         }
     }
 }

@@ -33,7 +33,7 @@ enum API {
 }
 
 enum ApiService {
-    static func fetchList(_ fetchCount: Int = 0) -> AnyPublisher<PokeLists, Error> {
+    static func fetchList(_ fetchCount: Int) -> AnyPublisher<PokeLists, Error> {
         return AF.request(API.fetchLists(count: fetchCount).url)
             .publishDecodable(type: PokeLists.self)
             .value()
@@ -44,7 +44,7 @@ enum ApiService {
     }
     
     static func fetchListAndThenDetail(_ fetchCount: Int = 0) -> AnyPublisher<PokemonInfo, Error> {
-        return fetchList()
+        return fetchList(fetchCount)
             .flatMap { pokeList in
                 Publishers.MergeMany(pokeList.results.map { fetchDetail(url:$0.url) })
             }

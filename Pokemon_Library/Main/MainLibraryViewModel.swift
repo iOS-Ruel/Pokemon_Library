@@ -131,11 +131,9 @@ class MainLibraryViewModel: ObservableObject {
     
     var subsciptions = Set<AnyCancellable>()
     
-    
     var pokemonLists: PokeLists?
     
     @Published var pokemonArr: [Pokemon] = []
-    
     func fetchListAndThenDetail(_ fetchCount: Int = 0) {
 
         ApiService.fetchListAndThenDetail(fetchCount)
@@ -177,8 +175,8 @@ class MainLibraryViewModel: ObservableObject {
                     // 모든 Pokemon을 받았으므로 정렬할 수 있음
                     let sortedPokemons = pokemons.sorted { $0.order < $1.order }
                     // 정렬된 Pokemons를 사용하거나 저장
-                    
-                    self.pokemonArr = sortedPokemons
+
+                    self.pokemonArr.append(contentsOf: sortedPokemons)
                 }
                 .store(in: &subsciptions)
     }
