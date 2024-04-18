@@ -32,7 +32,6 @@ struct PokemonInfo: Codable {
     let name: String
     let order: Int
     let species: Species
-    let sprites: Sprites
     let stats: [Stats]
     let types: [Types]
     let weight: Int
@@ -48,10 +47,6 @@ struct Species: Codable {
     let url: String
 }
 
-struct Sprites: Codable {
-    let front_default: String
-    let other: SpritesOther
-}
 
 
 struct Stats: Codable, Identifiable {
@@ -83,12 +78,9 @@ struct Stat: Codable {
     }
 }
 
-struct SpritesOther: Codable {
-    let showdown: Showdown
-}
 
 struct Showdown: Codable {
-    let front_default: String
+    let front_default: String?
 }
 
 
@@ -155,8 +147,7 @@ struct Pokemon: Codable, Equatable {
     let weight: Double
     var krType: [TypeName]
     var enType: [TypeName]
-    let smallImage: String
-    let largeImage: String
+  
     let pokemonInfoText: String
     let state: [Stats]
     

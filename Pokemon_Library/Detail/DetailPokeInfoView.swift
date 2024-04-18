@@ -303,7 +303,7 @@ struct DetailPokeInfoView: View {
                                                         height: 7, weight: 0.4,
                                                         krType: [TypeName(language: LanguageSet(name: "ko", url: ""), name: "풀"), TypeName(language: LanguageSet(name: "ko", url: ""), name: "독")],
                                                         enType: [TypeName(language: LanguageSet(name: "en", url: ""), name: "grass"),TypeName(language: LanguageSet(name: "en", url: ""), name: "Poison")],
-                                                        smallImage: "", largeImage: "",
+                                                        
                                                         pokemonInfoText: "ㄴㅅ갸"
                                                         ,
                                                         state: [Stats(base_stat: 45, effort: 0, stat: Stat(name: "hp", url: ""))

@@ -9,7 +9,6 @@ import SwiftUI
 
 struct MainLibraryView: View {
     @ObservedObject private var viewModel = MainLibraryViewModel()
-    @Namespace var animation
     @State private var showModal = false
     
     
@@ -35,12 +34,17 @@ struct MainLibraryView: View {
                                     DetailPokeInfoView(viewModel: DetailPokeViewModel(poke: viewModel.selectedPokemon))
                                 })
                                 .onAppear {
-                                    
-                                    
                                     if viewModel.pokemonArr.count > 1 && !viewModel.pokemonArr.isEmpty && poke == viewModel.pokemonArr.last {
+                                    
                                         self.count += 20
                                         viewModel.fetchListAndThenDetail(self.count)
-   
+                                        
+//                                        viewModel.isFirst = false
+//                                        viewModel.pokemonCnt += 20
+//                                        Task {
+//                                            try await viewModel.getPokemon()
+//                                        }
+                                        
                                         
                                     }
                                     
@@ -53,10 +57,17 @@ struct MainLibraryView: View {
             }
             
             if viewModel.showProgress {
-                ProgressView("loading ... ")
-                    .onAppear{
-                        print("loading")
-                    }
+                
+                ProgressView("로딩중... ")
+                    .font(.system(size: 20,weight: .bold))
+                    .foregroundStyle(.white)
+                    .controlSize(.large)
+                    .frame(maxWidth: .infinity,maxHeight: .infinity)
+                    
+                    .background(.black.opacity(0.6))
+
+                    
+                    
             }
             
         }
@@ -64,10 +75,21 @@ struct MainLibraryView: View {
             if viewModel.pokemonArr.isEmpty {
                 viewModel.fetchListAndThenDetail()
             }
-
+            
+//            if viewModel.pokemonSpecies.isEmpty {
+//                viewModel.isFirst = true
+//                Task {
+//                    try await viewModel.getPokemon()
+//                }
+//                
+//                viewModel.fetchListAndThenDetail(0)
+//            }
+            
         }
     }
 }
+
+
 
 #Preview {
     MainLibraryView()

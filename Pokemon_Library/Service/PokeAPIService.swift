@@ -72,21 +72,7 @@ enum ApiService {
             }
             .eraseToAnyPublisher()
     }
-    
-//    static func fetchType(info: PokemonInfo) -> AnyPublisher<TypeNames, Error> {
-////        print(info.types.first!.type.url)
-////        print("=====")
-//        print(#function ,info.types)
-//        
-//        return AF.request(API.fetchType(typeUrl: info.types.first!.type.url).url)
-//            .publishDecodable(type: TypeNames.self)
-//            .value()
-//            .mapError { afError in
-//                return afError as Error
-//            }
-//            .eraseToAnyPublisher()
-//    }
-    
+
     static func fetchTypes(info: PokemonInfo) -> AnyPublisher<[TypeNames], Error> {
         let typeRequests = info.types.map { typeInfo in
             fetchType(info: info, typeUrl: typeInfo.type.url)

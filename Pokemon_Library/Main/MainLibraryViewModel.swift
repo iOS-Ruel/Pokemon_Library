@@ -92,8 +92,6 @@ class MainLibraryViewModel: ObservableObject {
                                   weight: Double(self.pokemonInfo[i].weight)/10,
                                   krType: Array(krTypeNameArr.prefix(count).suffix(self.pokemonInfo[i].types.count)),
                                   enType: Array(enTypeNameArr.prefix(count).suffix(self.pokemonInfo[i].types.count)),
-                                  smallImage: self.pokemonInfo[i].sprites.other.showdown.front_default,
-                                  largeImage: self.pokemonInfo[i].sprites.other.showdown.front_default,
                                   pokemonInfoText: self.pokemonInfoText[i].flavor_text,
                                   state: self.pokemonInfo[i].stats.filter { $0.stat.name !=  "special-attack" && $0.stat.name !=  "special-defense"}
             )
@@ -131,31 +129,33 @@ class MainLibraryViewModel: ObservableObject {
     
     var subsciptions = Set<AnyCancellable>()
     
+    
     var pokemonLists: PokeLists?
     
     @Published var pokemonArr: [Pokemon] = []
     func fetchListAndThenDetail(_ fetchCount: Int = 0) {
-
+        self.showProgress = true
         ApiService.fetchListAndThenDetail(fetchCount)
                 .flatMap { pokeList -> AnyPublisher<Pokemon, Error> in
                     return ApiService.fetchSpecies(number: pokeList.id)
                         .flatMap { species -> AnyPublisher<Pokemon, Error> in
+                            print(pokeList)
                             let id = pokeList.id
                             let order = pokeList.order
                             let color = species.color.name
-                            let name = species.names.filter { $0.language.name == "ko" }.first!.name
-                            let height = Double(pokeList.height / 10)
-                            let weight = Double(pokeList.height / 10)
-                            let image = pokeList.sprites.other.showdown.front_default
-                            let infoText = species.flavor_text_entries.filter { $0.language.name == "ko" }.first!.flavor_text
+                            let name = species.names.filter { $0.language.name == "ko" }.first?.name ?? ""
+                            let height = Double(pokeList.height) / 10
+                            let weight = Double(pokeList.height) / 10
+                            let infoText = species.flavor_text_entries.filter { $0.language.name == "ko" }.first?.flavor_text ?? "정보 없음"
                             let state = pokeList.stats.filter { $0.stat.name != "special-attack" && $0.stat.name !=  "special-defense" }
                             
                             return ApiService.fetchTypes(info: pokeList)
                                 .map { types -> Pokemon in
+                                    
                                     let krNameArr = types.flatMap({ $0.names.filter{$0.language.name == "ko"} })
                                     let enNameArr =  types.flatMap({ $0.names.filter{$0.language.name == "en"} })
                                     
-                                    let pokemon = Pokemon(id: id, order: order, name: name, color: color, height:  height, weight: weight, krType: krNameArr, enType: enNameArr, smallImage: image, largeImage: image, pokemonInfoText: infoText, state: state)
+                                    let pokemon = Pokemon(id: id, order: order, name: name, color: color, height:  height, weight: weight, krType: krNameArr, enType: enNameArr,  pokemonInfoText: infoText, state: state)
                                     return pokemon
                                 }
                                 .eraseToAnyPublisher()
@@ -173,10 +173,10 @@ class MainLibraryViewModel: ObservableObject {
                     }
                 } receiveValue: { pokemons in
                     // 모든 Pokemon을 받았으므로 정렬할 수 있음
-                    let sortedPokemons = pokemons.sorted { $0.order < $1.order }
+                    let sortedPokemons = pokemons.sorted { $0.id < $1.id }
                     // 정렬된 Pokemons를 사용하거나 저장
-
                     self.pokemonArr.append(contentsOf: sortedPokemons)
+                    self.showProgress = false
                 }
                 .store(in: &subsciptions)
     }
