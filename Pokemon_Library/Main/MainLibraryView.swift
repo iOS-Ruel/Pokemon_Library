@@ -8,11 +8,9 @@
 import SwiftUI
 
 struct MainLibraryView: View {
-    @ObservedObject private var viewModel = MainLibraryViewModel()
-    @State private var showModal = false
-    
-    
+    @StateObject private var viewModel = MainLibraryViewModel()
     @State private var count = 0
+    @State private var showModal = false
     
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
     
@@ -38,17 +36,7 @@ struct MainLibraryView: View {
                                     
                                         self.count += 20
                                         viewModel.fetchListAndThenDetail(self.count)
-                                        
-//                                        viewModel.isFirst = false
-//                                        viewModel.pokemonCnt += 20
-//                                        Task {
-//                                            try await viewModel.getPokemon()
-//                                        }
-                                        
-                                        
                                     }
-                                    
-                                    
                                 }
                         }
                     }
@@ -75,16 +63,6 @@ struct MainLibraryView: View {
             if viewModel.pokemonArr.isEmpty {
                 viewModel.fetchListAndThenDetail()
             }
-            
-//            if viewModel.pokemonSpecies.isEmpty {
-//                viewModel.isFirst = true
-//                Task {
-//                    try await viewModel.getPokemon()
-//                }
-//                
-//                viewModel.fetchListAndThenDetail(0)
-//            }
-            
         }
     }
 }
