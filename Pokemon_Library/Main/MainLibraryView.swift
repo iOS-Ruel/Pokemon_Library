@@ -21,7 +21,6 @@ struct MainLibraryView: View {
                     LazyVGrid(columns: columns){
                         ForEach(viewModel.pokemonArr, id: \.id) { poke in
                             
-                            
                             MainLibraryListRow(poke: poke, viewModel: viewModel)
                                 .onTapGesture {
                                     print(poke.name)
@@ -29,10 +28,13 @@ struct MainLibraryView: View {
                                     viewModel.selectedPokemon = poke
                                 }
                                 .fullScreenCover(isPresented: $showModal, content: {
-                                    DetailPokeInfoView(viewModel: DetailPokeViewModel(poke: viewModel.selectedPokemon))
+                                    DetailPokeInfoView(viewModel: 
+                                                        DetailPokeViewModel(poke:
+                                                                                viewModel.selectedPokemon))
                                 })
                                 .onAppear {
-                                    if viewModel.pokemonArr.count > 1 && !viewModel.pokemonArr.isEmpty && poke == viewModel.pokemonArr.last {
+                                    if viewModel.pokemonArr.count > 1 
+                                        && poke == viewModel.pokemonArr.last {
                                     
                                         self.count += 20
                                         viewModel.fetchListAndThenDetail(self.count)

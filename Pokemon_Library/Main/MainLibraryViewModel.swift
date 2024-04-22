@@ -19,8 +19,10 @@ class MainLibraryViewModel: ObservableObject {
     var pokemonLists: PokeLists?
     
     @Published var pokemonArr: [Pokemon] = []
+    
     func fetchListAndThenDetail(_ fetchCount: Int = 0) {
         self.showProgress = true
+        
         ApiService.fetchListAndThenDetail(fetchCount)
                 .flatMap { pokeList -> AnyPublisher<Pokemon, Error> in
                     return ApiService.fetchSpecies(number: pokeList.id)
@@ -29,19 +31,33 @@ class MainLibraryViewModel: ObservableObject {
                             let id = pokeList.id
                             let order = pokeList.order
                             let color = species.color.name
-                            let name = species.names.filter { $0.language.name == "ko" }.first?.name ?? ""
+                            let name = species.names.filter {
+                                $0.language.name == "ko"
+                            }.first?.name ?? ""
                             let height = Double(pokeList.height) / 10
                             let weight = Double(pokeList.height) / 10
-                            let infoText = species.flavor_text_entries.filter { $0.language.name == "ko" }.first?.flavor_text ?? "정보 없음"
-                            let state = pokeList.stats.filter { $0.stat.name != "special-attack" && $0.stat.name !=  "special-defense" }
+                            let infoText = species.flavor_text_entries.filter {
+                                $0.language.name == "ko"
+                            }.first?.flavor_text ?? "정보 없음"
+                            let state = pokeList.stats.filter { 
+                                $0.stat.name != "special-attack"
+                                && $0.stat.name !=  "special-defense" }
                             
                             return ApiService.fetchTypes(info: pokeList)
                                 .map { types -> Pokemon in
                                     
-                                    let krNameArr = types.flatMap({ $0.names.filter{$0.language.name == "ko"} })
-                                    let enNameArr =  types.flatMap({ $0.names.filter{$0.language.name == "en"} })
+                                    let krNameArr = types.flatMap({ $0.names.filter{
+                                        $0.language.name == "ko"}
+                                    })
+                                    let enNameArr =  types.flatMap({
+                                        $0.names.filter{$0.language.name == "en"}
+                                    })
                                     
-                                    let pokemon = Pokemon(id: id, order: order, name: name, color: color, height:  height, weight: weight, krType: krNameArr, enType: enNameArr,  pokemonInfoText: infoText, state: state)
+                                    let pokemon = Pokemon(id: id, order: order, name: name, 
+                                                          color: color, height:  height,
+                                                          weight: weight, krType: krNameArr,
+                                                          enType: enNameArr,  pokemonInfoText:
+                                                            infoText, state: state)
                                     
                                     return pokemon
                                 }
@@ -70,7 +86,8 @@ class MainLibraryViewModel: ObservableObject {
     
     
     var firstTypeColor: Color? {
-        guard let firstValue = selectedPokemon.type.first?.rawValue, let type = PokemonType(rawValue: firstValue) else  { return nil }
+        guard let firstValue = selectedPokemon.type.first?.rawValue, 
+                let type = PokemonType(rawValue: firstValue) else  { return nil }
         
         return ThemeColor.typeColor(type: type)
     }
