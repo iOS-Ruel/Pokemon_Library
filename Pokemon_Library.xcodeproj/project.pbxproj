@@ -26,6 +26,7 @@
 		417FB41D2D2EA81A009C5FCE /* PokemonInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417FB41C2D2EA81A009C5FCE /* PokemonInfoModel.swift */; };
 		417FB41F2D2EA834009C5FCE /* PokeSpeciesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417FB41E2D2EA834009C5FCE /* PokeSpeciesModel.swift */; };
 		417FB4242D2EA8D5009C5FCE /* Pokemon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417FB4232D2EA8D5009C5FCE /* Pokemon.swift */; };
+		417FB4262D2EA9E5009C5FCE /* PokemonRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417FB4252D2EA9E5009C5FCE /* PokemonRepositoryProtocol.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +49,7 @@
 		417FB41C2D2EA81A009C5FCE /* PokemonInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonInfoModel.swift; sourceTree = "<group>"; };
 		417FB41E2D2EA834009C5FCE /* PokeSpeciesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokeSpeciesModel.swift; sourceTree = "<group>"; };
 		417FB4232D2EA8D5009C5FCE /* Pokemon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pokemon.swift; sourceTree = "<group>"; };
+		417FB4252D2EA9E5009C5FCE /* PokemonRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonRepositoryProtocol.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,6 +148,7 @@
 			isa = PBXGroup;
 			children = (
 				417FB4232D2EA8D5009C5FCE /* Pokemon.swift */,
+				417FB4252D2EA9E5009C5FCE /* PokemonRepositoryProtocol.swift */,
 			);
 			path = Domain;
 			sourceTree = "<group>";
@@ -263,6 +266,7 @@
 				415A7D362BB8669D00772294 /* ThemeColor.swift in Sources */,
 				41246B5C2BB7DA5500FDD0A3 /* Pokemon_LibraryApp.swift in Sources */,
 				4102A86F2BB7DF25005745D8 /* MainLibraryView.swift in Sources */,
+				417FB4262D2EA9E5009C5FCE /* PokemonRepositoryProtocol.swift in Sources */,
 				415A7D382BB866BF00772294 /* UIColor+Extension.swift in Sources */,
 				415A7D202BB7E71A00772294 /* MainLibraryListRow.swift in Sources */,
 				415A7D252BB7F2F600772294 /* Animation+Extension.swift in Sources */,
