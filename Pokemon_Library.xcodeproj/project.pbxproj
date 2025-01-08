@@ -15,7 +15,6 @@
 		415A7D202BB7E71A00772294 /* MainLibraryListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 415A7D1F2BB7E71A00772294 /* MainLibraryListRow.swift */; };
 		415A7D252BB7F2F600772294 /* Animation+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 415A7D242BB7F2F600772294 /* Animation+Extension.swift */; };
 		415A7D292BB8121B00772294 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 415A7D282BB8121B00772294 /* Alamofire */; };
-		415A7D2B2BB8121B00772294 /* AlamofireDynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 415A7D2A2BB8121B00772294 /* AlamofireDynamic */; };
 		415A7D2D2BB8122700772294 /* PokeAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 415A7D2C2BB8122700772294 /* PokeAPIService.swift */; };
 		415A7D322BB8157900772294 /* MainLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 415A7D312BB8157900772294 /* MainLibraryViewModel.swift */; };
 		415A7D342BB82CB000772294 /* PokemonDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 415A7D332BB82CB000772294 /* PokemonDetail.swift */; };
@@ -26,6 +25,7 @@
 		417FB41B2D2EA7FE009C5FCE /* PokeListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417FB41A2D2EA7FE009C5FCE /* PokeListModel.swift */; };
 		417FB41D2D2EA81A009C5FCE /* PokemonInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417FB41C2D2EA81A009C5FCE /* PokemonInfoModel.swift */; };
 		417FB41F2D2EA834009C5FCE /* PokeSpeciesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417FB41E2D2EA834009C5FCE /* PokeSpeciesModel.swift */; };
+		417FB4242D2EA8D5009C5FCE /* Pokemon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417FB4232D2EA8D5009C5FCE /* Pokemon.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +47,7 @@
 		417FB41A2D2EA7FE009C5FCE /* PokeListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokeListModel.swift; sourceTree = "<group>"; };
 		417FB41C2D2EA81A009C5FCE /* PokemonInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonInfoModel.swift; sourceTree = "<group>"; };
 		417FB41E2D2EA834009C5FCE /* PokeSpeciesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokeSpeciesModel.swift; sourceTree = "<group>"; };
+		417FB4232D2EA8D5009C5FCE /* Pokemon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pokemon.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,7 +56,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				415A7D292BB8121B00772294 /* Alamofire in Frameworks */,
-				415A7D2B2BB8121B00772294 /* AlamofireDynamic in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,6 +81,7 @@
 		41246B5A2BB7DA5500FDD0A3 /* Pokemon_Library */ = {
 			isa = PBXGroup;
 			children = (
+				417FB4212D2EA8C9009C5FCE /* Domain */,
 				417FB4172D2EA7E0009C5FCE /* Entities */,
 				419FCB442BC66A82009E8463 /* Service */,
 				419FCB432BC66A65009E8463 /* Public */,
@@ -141,6 +142,14 @@
 			path = Entities;
 			sourceTree = "<group>";
 		};
+		417FB4212D2EA8C9009C5FCE /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				417FB4232D2EA8D5009C5FCE /* Pokemon.swift */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
 		419FCB422BC66A50009E8463 /* Extension */ = {
 			isa = PBXGroup;
 			children = (
@@ -184,7 +193,6 @@
 			name = Pokemon_Library;
 			packageProductDependencies = (
 				415A7D282BB8121B00772294 /* Alamofire */,
-				415A7D2A2BB8121B00772294 /* AlamofireDynamic */,
 			);
 			productName = Pokemon_Library;
 			productReference = 41246B582BB7DA5500FDD0A3 /* Pokemon_Library.app */;
@@ -244,6 +252,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				417FB41B2D2EA7FE009C5FCE /* PokeListModel.swift in Sources */,
+				417FB4242D2EA8D5009C5FCE /* Pokemon.swift in Sources */,
 				415A7D3A2BB90AF500772294 /* DetailPokeViewModel.swift in Sources */,
 				415A7D342BB82CB000772294 /* PokemonDetail.swift in Sources */,
 				417FB41F2D2EA834009C5FCE /* PokeSpeciesModel.swift in Sources */,
@@ -484,11 +493,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 415A7D272BB8121B00772294 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
-		};
-		415A7D2A2BB8121B00772294 /* AlamofireDynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 415A7D272BB8121B00772294 /* XCRemoteSwiftPackageReference "Alamofire" */;
-			productName = AlamofireDynamic;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
