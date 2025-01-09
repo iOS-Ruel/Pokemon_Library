@@ -51,49 +51,16 @@ struct DetailPokeInfoView: View {
                 .clipShape(
                     RoundedRectangle(cornerRadius: 20, style: .continuous)
                 )
+                .shadow(color: viewModel.secondTypeColor ?? .white, radius: 30, x: 5, y: 5)
             }
+            
             
             pokeWHInfoView()
             
-            topIdCloseView()
+            
+            TopIdCloseView(pokeId: viewModel.poke?.id ?? 0)
         }
         .edgesIgnoringSafeArea(.all)
-    }
-    
-    func topIdCloseView() -> some View {
-        VStack {
-            Spacer()
-                .frame(height: 50)
-            HStack{
-                Text("# \(viewModel.poke?.id ?? 0)")
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(.gray)
-                    .padding(.leading)
-                
-                Spacer()
-                Button{
-                    
-                    withAnimation(Animation.easeIn(duration: 0.5)) {
-                        presentation.wrappedValue.dismiss()
-
-                    }
-                    
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.title)
-                        .foregroundColor(.primary)
-                }
-                .padding()
-                .foregroundColor(.white)
-                .clipShape(Circle())
-                .padding(.trailing) // 오른쪽 여백 추가
-            }
-            
-            
-            Spacer()
-            
-        }
-        .padding(.trailing, 16) // 버튼을 오른쪽 상단에 이동시키기 위한 추가 패딩
     }
     
     func pokeWHInfoView() -> some View {
@@ -201,7 +168,6 @@ struct DetailPokeInfoView: View {
         
         Text(viewModel.poke?.pokemonInfoText ?? "")
             .font(.system(size: 15, weight: .medium))
-        
             .padding()
             .frame(width: 300, alignment: .center)
             .foregroundStyle(.gray)
@@ -225,7 +191,9 @@ struct DetailPokeInfoView: View {
             
             if let stats = viewModel.poke?.state {
                 ForEach(stats) { stat in
-                    HorizontalBarChart(data: [Double(stat.base_stat)], color: statBarColor(state: stat.stat.name), title: stat.stat.krName)
+                    HorizontalBarChart(data: [Double(stat.base_stat)],
+                                       color: statBarColor(state: stat.stat.name),
+                                       title: stat.stat.krName)
                         .foregroundStyle(.clear)
                         .frame(width: 300)
                 }
