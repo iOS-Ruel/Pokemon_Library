@@ -79,14 +79,16 @@ struct MainLibraryListRow: View {
                         Pokemon(id: 1, order: 1,
                                 name: "이상해씨", color: "green",
                                 height: 7, weight: 0.4,
-                                krType: [TypeName(language: LanguageSet(name: "ko", url: ""), name: "풀"), TypeName(language: LanguageSet(name: "ko", url: ""), name: "독")],
-                                enType: [TypeName(language: LanguageSet(name: "en", url: ""), name: "grass"),TypeName(language: LanguageSet(name: "en", url: ""), name: "Poison")],
+                                krType: [TypeName(language: LanguageSet(name: "ko", url: ""), name: "풀"),
+                                         TypeName(language: LanguageSet(name: "ko", url: ""), name: "독")],
+                                enType: [TypeName(language: LanguageSet(name: "en", url: ""), name: "grass"),
+                                         TypeName(language: LanguageSet(name: "en", url: ""), name: "Poison")],
                                 
                                 pokemonInfoText: "ㄴㅅ갸"
                                 ,
                                state: []
                                )
-                       ,viewModel: MainLibraryViewModel()
+                       ,viewModel: MainLibraryViewModel(usecase: PokemonUseCase(repository: PokemonAPIRepository()))
     )
 
 }
