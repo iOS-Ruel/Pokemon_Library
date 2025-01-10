@@ -194,14 +194,19 @@
     - 위와 같이 구현했을때 리스트가 맨마지막일때 체크를 하고 추가적인 데이터를 호출해야함 따라서 리스트의 각 셀인 MainLibraryListRow의 onAppear에 조건을 추가하여 페이징 처리
     <img width="798" alt="rowonappear" src="https://github.com/iOS-Ruel/Pokemon_Library/assets/67133244/89a160e3-ce87-4113-9980-929d41301bff">
 
-## 4. 개선사항
+<br><br><br><br><br><br><br><br>
+## 4. 리팩토링
+- Clean Architecture 적용 (~1/10)
+
+
+## 5. 개선사항
 
 - 상세 페이지로 화면이 이동할 때 커스텀 애니메이션
 - 포켓몬 검색
 - 데이터 호출 속도 개선
 - combine 적용
 
-## 5. 개인적인 생각
+## 6. 개인적인 생각
 
 - swiftUI를 처음 사용해 보았는데, 기존 UIKit에 비해 코드 작성이 쉬워지고 자유로워짐을 느꼈다.
 - **@State, @Binding, @Environment** 등 프로퍼티 래퍼를 사용하게 되었는데 정리를 하여 확실하게 기억해야겠다.
