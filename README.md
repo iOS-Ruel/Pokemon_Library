@@ -41,7 +41,14 @@
     <img src="https://github.com/iOS-Ruel/Pokemon_Library/assets/67133244/233613fc-a065-448d-b200-55746bc170e0   " align="left" width="25%"> 
 
     <div>
-    &nbsp 1. Service<br>
+   &nbsp 1. Service<br>
+        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- API통신을 위한 코드 모음<br>
+    &nbsp 1. Presentation<br>
+        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- API통신을 위한 코드 모음<br>
+    &nbsp 1. Repository<br>
+        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- API통신을 위한 코드 모음<br>
+
+   &nbsp 1. Service<br>
         &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- API통신을 위한 코드 모음<br>
     &nbsp 2. Public<br>
      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- 모든 곳에서 사용될 코드 모음<br>
