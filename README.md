@@ -13,6 +13,7 @@
 ## 개요
 - SwiftUI를 활용하여 만든 간단한 포켓몬 도감 앱입니다.
 - https://pokeapi.co/의 API를 활용하였습니다.
+- Clean Architecture를 적용하였습니다.
 
 ## 설명
 1. https://pokeapi.co/ 에서 제공하는 포켓몬 API를 통해 포켓몬 리스트와 상세페이지 구현
@@ -38,30 +39,29 @@
 
 4. 폴더링
     <p align="center">
-    <img src="https://github.com/iOS-Ruel/Pokemon_Library/assets/67133244/233613fc-a065-448d-b200-55746bc170e0   " align="left" width="25%"> 
+    <img src="https://github.com/user-attachments/assets/d735ca44-07db-4c4d-8666-0945d56c3108   " align="left" width="25%"> 
 
     <div>
    &nbsp 1. Service<br>
-        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- API통신을 위한 코드 모음<br>
-    &nbsp 1. Presentation<br>
-        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- API통신을 위한 코드 모음<br>
-    &nbsp 1. Repository<br>
-        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- API통신을 위한 코드 모음<br>
-
-   &nbsp 1. Service<br>
-        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- API통신을 위한 코드 모음<br>
-    &nbsp 2. Public<br>
-     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- 모든 곳에서 사용될 코드 모음<br>
-    &nbsp 3. Extension<br>
-     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- 애니메이션에 대한 코드<br>
-     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- ThemeColor에서 hexString을 사용하기 위해 UIColor를 확장한 코드<br>
+        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- 외부 API와의 통신을 담당<br>
+    &nbsp 2. Entites<br>
+        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- API 응답을 받아서 필요한 모델 객체들을 정의<br>
+    &nbsp 3. Domain<br>
+        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- 데이터 호출 로직 분리<br>
     &nbsp 4. Data<br>
-     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- API를 통해 가져온 데이터를 가공하기 위한 Model 객체 모음<br>
+        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- API에서 가져온 데이터를 가공<br>
     &nbsp 5. Detail<br>
      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- 상세 화면에 대한 View, ViewModel 모음<br>
     &nbsp 6. Main <br>
      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- 메인 리스트 화면에 대한 View, ViewModel 모음 <br>
+    &nbsp 7. Public<br>
+     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- 모든 곳에서 사용될 코드 모음<br>
+    &nbsp 8. Extension<br>
+     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- 애니메이션에 대한 코드<br>
+     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- ThemeColor에서 hexString을 사용하기 위해 UIColor를 확장한 코드<br>
       </div>
+      
+
 
 
 
@@ -202,16 +202,52 @@
     <img width="798" alt="rowonappear" src="https://github.com/iOS-Ruel/Pokemon_Library/assets/67133244/89a160e3-ce87-4113-9980-929d41301bff">
 
 <br><br><br><br><br><br><br><br>
+
 ## 4. 리팩토링
 - Clean Architecture 적용 (~1/10)
+  ### Domain:
+    <b>주요 역할</b>: 비즈니스 로직과 핵심 규칙을 포함. 이 계층은 앱의 나머지 계층에 의존하지 않으며, 앱의 "핵심" 역할.<br>
+    예시: Pokemon.swift, PokemonRepositoryProtocol.swift, PokemonUseCase.swift<br>
+    <b>변경 사항</b>: 이 계층의 파일은 도메인 모델과 그에 해당하는 비즈니스 로직 담당. 예를 들어, PokemonRepositoryProtocol.swift는 리포지토리 인터페이스를 정의하고, PokemonUseCase.swift는 실제 서비스 계층에서 비즈니스 로직을 처리.<br>
+
+  ### Entities:
+    <b>주요 역할</b>: 앱 내에서 공유되는 데이터를 정의하는 계층. 엔티티는 순수한 모델로, 앱 로직에서 직접 사용되는 데이터 구조를 포함.<br>
+    예시: PokemonInfoModel.swift, PokeListModel.swift, PokeSpeciesModel.swift<br>
+    <b>변경 사항</b>: 이 계층에서 모델을 정의하고, API로부터 받은 데이터를 가공할 때 필요한 엔티티 구조를 설정. Clean Architecture에서 Entities는 Domain 계층의 핵심을 구성.<br>
+
+  ### Service:
+    <b>주요 역할</b>: 외부 API 호출 및 데이터 소스를 관리하는 계층. 서비스 계층은 데이터를 가져오고 변환하는 역할.<br>
+    예시: PokeAPIService.swift, PokemonAPIRepository.swift<br>
+    <b>변경 사항</b>: 외부 API와의 통신 로직을 이곳에서 처리. 예를 들어, PokeAPIService.swift는 외부 API 호출을 관리하고, PokemonAPIRepository.swift는 데이터를 처리.<br>
+
+  ### Public:
+    <b>주요 역할</b>: 앱 내에서 공통으로 사용되는 코드들이 이곳에 위치.<br>
+    예시: ThemeColor.swift<br>
+    <b>변경 사항</b>: 앱 전반에서 공통적으로 사용될 수 있는 코드들을 정의. 예를 들어, 색상 관련 정의나 확장 기능들이 포함.<br>
+
+  ### Extension:
+    <b>주요 역할</b>: 앱의 확장을 위한 코드가 위치. 예를 들어, UIKit 및 SwiftUI의 기본 기능에 추가 기능을 제공하는 곳.<br>
+    예시: UIColor+Extensions.swift, UIViewController+Extensions.swift<br>
+    <b>변경 사항</b>: 애니메이션 처리나 공통적인 뷰 스타일링을 위한 확장 메서드들을 여기에 배치.<br>
+
+  ### Data:
+    <b>주요 역할</b>: API에서 가져온 데이터를 가공하고, 각 계층으로 전달하기 위한 모델 객체 포함.<br>
+    예시: PokemonDetail.swift<br>
+    <b>변경 사항</b>: 데이터를 처리하는 로직을 책임지며, 데이터가 도메인 계층으로 전달되기 전에 가공.<br>
+
+  ### Detail&Main:
+    <b>주요 역할</b>: 상세 화면, 메인에 해당하는 뷰 및 뷰 모델 처리.<br>
+    예시: DetailPokeInfoView.swift, DetailPokeViewModel.swift, MainLibraryView.swift, MainLibraryListRow.swift, MainLibraryViewModel.swift<br>
+    <b>변경 사항</b>: 상세, 메인페이지에서 사용할 뷰 및 뷰 모델을 이곳에 배치. 상세 화면에 관련된 로직 포함<br>
 
 
 ## 5. 개선사항
 
 - 상세 페이지로 화면이 이동할 때 커스텀 애니메이션
 - 포켓몬 검색
-- 데이터 호출 속도 개선
-- combine 적용
+- 데이터 호출 속도 개선(O)
+- combine 적용(O)
+- Clean Architecture 적용(O)
 
 ## 6. 개인적인 생각
 
@@ -220,3 +256,7 @@
     - https://github.com/iOS-Ruel/SwiftUI_DiarySample → 학습을 통해 사용해보며 프로퍼티 래퍼 정리
 - 화면전환 애니메이션에 있어 제약사항이 많은 것 같다(개인적으로 찾아보았을때…) 아직 swiftUI만 사용하기 보다 UIKit과 함께 사용해야 더 많은 기능을 구현할 수 있을 것 같다
 - 혼자 진행하다 보니 깃 브랜치 관리에 대해 소홀했다라고 생각이 들었음. 혼자 하더라도 기능별 브랜치를 만들어 관리하는 습관을 길러야할것 같음
+- 기존 MVVM 패턴을 사용하여 프로젝트를 구성하였었고, CleanArchitecture로 리펙토링을 진행하였는데, 현재 프로젝트에서는 Clean Architecture가 과함을 느낌
+  - 다만 규모가 큰 프로젝트를 진행할 경우, 협업 또는 테스트코드 작성을 할 때 많은 이점을 누릴 수 있다고 생각함.
+  - 협업시에는 각각의 역할의 분리로 명확하게 구성을 파악할 수 있고 역할에 따른 분리로 한 사람이 코드를 구성한 것과 같은 장점이 있을 것 같음
+  
