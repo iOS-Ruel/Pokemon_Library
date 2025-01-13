@@ -17,11 +17,11 @@ final class MainLibraryViewModel: ObservableObject {
     @Published var showProgress: Bool = false
     @Published var pokemonArr: [Pokemon] = []
 
-    private let usecase: PokemonUseCase
+    private let usecase: PokemonUseCaseProtocol
     private var subscriptions = Set<AnyCancellable>()
     private var fetchCount: Int = 0
 
-    init(usecase: PokemonUseCase) {
+    init(usecase: PokemonUseCaseProtocol) {
         self.usecase = usecase
     }
 

@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-final class PokemonUseCase {
+final class PokemonUseCase: PokemonUseCaseProtocol {
     private let repository: PokemonRepositoryProtocol
     
     init(repository: PokemonRepositoryProtocol) {
